@@ -1,13 +1,15 @@
+use std::boxed::Box;
+
 #[derive(Debug)]
-enum Expression<'a, T: 'a> {
+enum Expression<T> {
     Value(T),
-    Add(&'a Expression<'a, T>, &'a Expression<'a, T>),
+    Add(Box<Expression<T>>, Box<Expression<T>>),
 }
 
 fn main() {
     let a = Expression::Value(1);
     let b = Expression::Value(2);
-    let c = Expression::Add(&a, &b);
+    let c = Expression::Add(Box::new(a), Box::new(b));
 
     println!("c: {:?}", c);
 }
