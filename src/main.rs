@@ -29,6 +29,12 @@ impl<T: CheckedAdd + CheckedMul + Clone> Expression<T> {
     }
 }
 
+fn get_initial_expression_list(length: i32) -> Vec<Expression<f64>> {
+    (1..length + 1)
+        .map(|i| Expression::Value(i as f64))
+        .collect::<Vec<Expression<f64>>>()
+}
+
 fn main() {
     let a = Expression::Value(1);
     let b = Expression::Value(2);
@@ -39,5 +45,6 @@ fn main() {
 
     println!("final_expression: {:?}", final_expression);
     println!("final_expression.evaluate(): {:?}", final_expression.evaluate());
+    println!("get_initial_expression_list: {:?}", get_initial_expression_list(3));
 }
 
