@@ -3,6 +3,7 @@ pub trait Number: Sized {
     fn subtract(&self, &Self) -> Option<Self>;
     fn multiply(&self, &Self) -> Option<Self>;
     fn divide(&self, &Self) -> Option<Self>;
+    fn is_integer(&self) -> bool;
 }
 
 impl Number for i32 {
@@ -16,6 +17,7 @@ impl Number for i32 {
             Some(self / other)
         }
     }
+    fn is_integer(&self) -> bool { true }
 }
 
 impl Number for f64 {
@@ -29,5 +31,6 @@ impl Number for f64 {
             Some(self / other)
         }
     }
+    fn is_integer(&self) -> bool { *self % 1f64 == 0f64 }
 }
 
