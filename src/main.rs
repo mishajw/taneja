@@ -14,6 +14,14 @@ enum Expression<T> {
     Divide(Box<Expression<T>>, Box<Expression<T>>),
 }
 
+fn main() {
+    let es = get_initial_expression_list(3);
+    
+    for e in create_tree(es) {
+        println!("{:?} = {:?}", e, e.evaluate());
+    }
+}
+
 impl<T: Number + Clone> Expression<T> {
     fn evaluate(&self) -> Option<T> {
         match self {
@@ -94,13 +102,5 @@ fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
     }
 
     return ess
-}
-
-fn main() {
-    let es = get_initial_expression_list(3);
-    
-    for e in create_tree(es) {
-        println!("{:?} = {:?}", e, e.evaluate());
-    }
 }
 
