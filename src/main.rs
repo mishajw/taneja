@@ -42,10 +42,10 @@ impl<T: Debug> Debug for Expression<T> {
 }
 
 
-fn get_initial_expression_list(length: i32) -> Vec<Expression<f64>> {
+fn get_initial_expression_list(length: i32) -> Vec<Expression<i32>> {
     (1..length + 1)
-        .map(|i| Expression::Value(i as f64))
-        .collect::<Vec<Expression<f64>>>()
+        .map(Expression::Value)
+        .collect::<Vec<Expression<i32>>>()
 }
 
 fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
