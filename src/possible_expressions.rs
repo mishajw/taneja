@@ -23,12 +23,19 @@ pub fn make_possible_expressions<T: Clone>(mut es: Vec<Expression<T>>, callback:
 }
 
 fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
-    vec![
+    let mut combinations = vec![
         Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Divide(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Power(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Concat(Box::new(a.clone()), Box::new(b.clone()))]
+        Expression::Power(Box::new(a.clone()), Box::new(b.clone()))];
+
+    match (a, b) {
+        (&Expression::Value(_), &Expression::Value(_)) =>
+            combinations.push(Expression::Concat(Box::new(a.clone()), Box::new(b.clone()))),
+        _ => {}
+    }
+
+    return combinations
 }
 
