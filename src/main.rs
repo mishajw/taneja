@@ -19,7 +19,10 @@ fn main() {
     }
 
     for e in expressions {
-        println!("{}", e)
+        match e.evaluate() {
+            Some(evaluation) if evaluation.is_integer() => println!("{} = {}", e, evaluation),
+            _ => {}
+        }
     }
 }
 
