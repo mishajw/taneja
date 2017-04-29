@@ -83,7 +83,7 @@ fn main() {
     let es = get_initial_expression_list(3);
     
     for e in create_tree(es) {
-        println!("{:?}", e);
+        println!("{:?} = {:?}", e, e.evaluate());
     }
 }
 
