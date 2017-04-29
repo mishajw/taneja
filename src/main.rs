@@ -3,7 +3,7 @@ extern crate num;
 use std::boxed::Box;
 use num::{CheckedAdd, CheckedMul};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Expression<T> {
     Value(T),
     Add(Box<Expression<T>>, Box<Expression<T>>),
@@ -33,6 +33,12 @@ fn get_initial_expression_list(length: i32) -> Vec<Expression<f64>> {
     (1..length + 1)
         .map(|i| Expression::Value(i as f64))
         .collect::<Vec<Expression<f64>>>()
+}
+
+fn get_possible_combinations(a: Expression<f64>, b: Expression<f64>) -> Vec<Expression<f64>> {
+    vec![
+        Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
 fn main() {
