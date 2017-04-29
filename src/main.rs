@@ -4,6 +4,7 @@ mod number;
 use expression::Expression;
 use number::Number;
 use std::env;
+use std::collections::BTreeMap;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -22,22 +23,24 @@ fn main() {
 fn run_with_length(length: usize) {
     let initial_expressions = get_initial_expression_list(length);
 
-    let mut expressions: Vec<Expression<f64>> = Vec::new();
+    let mut evaluations: BTreeMap<i32, Expression<f64>> = BTreeMap::new();
 
     {
         // Must be scoped so the mutable reference to `expressions` dies before we want to use the list again
-        let callback = &mut |e| {
-            expressions.push(e)
+        let callback = &mut |e: Expression<f64>| {
+            if let Some(evaluation) = e.evaluate() {
+                if evaluation.is_integer() {
+                    evaluations.insert(evaluation as i32, e.clone());
+                }
+            }
         };
 
         make_possible_expressions(initial_expressions, callback);
     }
 
-    for e in expressions {
-        match e.evaluate() {
-            Some(evaluation) if evaluation.is_integer() => println!("{} = {}", e, evaluation),
-            _ => {}
-        }
+    println!("Expressions:");
+    for (evaluation, expression) in evaluations {
+        println!("{} = {}", expression, evaluation)
     }
 }
 
