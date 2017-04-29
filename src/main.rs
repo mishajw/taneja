@@ -54,12 +54,12 @@ fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> 
         Expression::Multiply(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
-fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Vec<Expression<T>>> {
+fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
     if es.len() < 2 {
-        return vec![es]
+        return es
     }
 
-    let mut ess: Vec<Vec<Expression<T>>> = Vec::new();
+    let mut ess: Vec<Expression<T>> = Vec::new();
 
     for i in 0..es.len() - 1 {
         let a = &es[i];
