@@ -3,9 +3,24 @@ mod number;
 
 use expression::Expression;
 use number::Number;
+use std::env;
 
 fn main() {
-    let initial_expressions = get_initial_expression_list(3);
+    let args: Vec<_> = env::args().collect();
+
+    if args.len() != 2 {
+        println!("Usage: {} <amount of numbers>", args[0]);
+        return
+    }
+
+    match args[1].parse::<usize>() {
+        Ok(length) => run_with_length(length),
+        Err(err) => println!("Couldn't parse {} as integer: {}", args[1], err),
+    }
+}
+
+fn run_with_length(length: usize) {
+    let initial_expressions = get_initial_expression_list(length);
 
     let mut expressions: Vec<Expression<f64>> = Vec::new();
 
