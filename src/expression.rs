@@ -10,6 +10,8 @@ pub enum Expression<T> {
     Subtract(Box<Expression<T>>, Box<Expression<T>>),
     Multiply(Box<Expression<T>>, Box<Expression<T>>),
     Divide(Box<Expression<T>>, Box<Expression<T>>),
+    Power(Box<Expression<T>>, Box<Expression<T>>),
+    Concat(Box<Expression<T>>, Box<Expression<T>>),
 }
 
 impl<T: Number + Clone> Expression<T> {
@@ -37,6 +39,16 @@ impl<T: Number + Clone> Expression<T> {
                     (Some(a), Some(b)) => a.divide(&b),
                     _ => None,
                 },
+            &Expression::Power(ref a, ref b) =>
+                match (a.evaluate(), b.evaluate()) {
+                    (Some(a), Some(b)) => a.power(&b),
+                    _ => None,
+                },
+            &Expression::Concat(ref a, ref b) =>
+                match (a.evaluate(), b.evaluate()) {
+                    (Some(a), Some(b)) => a.concat(&b),
+                    _ => None,
+                },
         }
     }
 }
@@ -49,6 +61,8 @@ impl<T: Display> Display for Expression<T> {
             &Expression::Subtract(ref a, ref b) => write!(f, "({} - {})", a, b),
             &Expression::Multiply(ref a, ref b) => write!(f, "({} * {})", a, b),
             &Expression::Divide(ref a, ref b) => write!(f, "({} / {})", a, b),
+            &Expression::Power(ref a, ref b) => write!(f, "({} ^ {})", a, b),
+            &Expression::Concat(ref a, ref b) => write!(f, "({} | {})", a, b),
         }
     }
 }

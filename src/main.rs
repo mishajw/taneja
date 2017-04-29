@@ -78,6 +78,8 @@ fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> 
         Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Divide(Box::new(a.clone()), Box::new(b.clone()))]
+        Expression::Divide(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Power(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Concat(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
