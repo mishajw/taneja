@@ -19,7 +19,7 @@ fn main() {
     }
 
     for e in expressions {
-        println!("{:?}", e)
+        println!("{}", e)
     }
 }
 

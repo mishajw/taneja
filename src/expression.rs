@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::Display;
 use std::fmt;
 use number::Number;
 use std::boxed::Box;
@@ -41,14 +41,14 @@ impl<T: Number + Clone> Expression<T> {
     }
 }
 
-impl<T: Debug> Debug for Expression<T> {
+impl<T: Display> Display for Expression<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            &Expression::Value(ref a) => write!(f, "{:?}", a),
-            &Expression::Add(ref a, ref b) => write!(f, "({:?} + {:?})", a, b),
-            &Expression::Subtract(ref a, ref b) => write!(f, "({:?} - {:?})", a, b),
-            &Expression::Multiply(ref a, ref b) => write!(f, "({:?} * {:?})", a, b),
-            &Expression::Divide(ref a, ref b) => write!(f, "({:?} / {:?})", a, b),
+            &Expression::Value(ref a) => write!(f, "{}", a),
+            &Expression::Add(ref a, ref b) => write!(f, "({} + {})", a, b),
+            &Expression::Subtract(ref a, ref b) => write!(f, "({} - {})", a, b),
+            &Expression::Multiply(ref a, ref b) => write!(f, "({} * {})", a, b),
+            &Expression::Divide(ref a, ref b) => write!(f, "({} / {})", a, b),
         }
     }
 }
