@@ -1,9 +1,11 @@
 extern crate num;
 
-use std::boxed::Box;
 use num::{CheckedAdd, CheckedMul};
+use std::boxed::Box;
+use std::fmt;
+use std::fmt::Debug;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 enum Expression<T> {
     Value(T),
     Add(Box<Expression<T>>, Box<Expression<T>>),
@@ -28,6 +30,17 @@ impl<T: CheckedAdd + CheckedMul + Clone> Expression<T> {
         }
     }
 }
+
+impl<T: Debug> Debug for Expression<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            &Expression::Value(ref a) => write!(f, "{:?}", a),
+            &Expression::Add(ref a, ref b) => write!(f, "({:?} + {:?})", a, b),
+            &Expression::Multiply(ref a, ref b) => write!(f, "({:?} * {:?})", a, b),
+        }
+    }
+}
+
 
 fn get_initial_expression_list(length: i32) -> Vec<Expression<f64>> {
     (1..length + 1)
