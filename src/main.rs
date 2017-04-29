@@ -5,23 +5,29 @@ use expression::Expression;
 use number::Number;
 
 fn main() {
-    let es = get_initial_expression_list(3);
-    
-    for e in create_tree(es) {
-        match e.evaluate() {
-            Some(evaluation) if evaluation.is_integer() =>
-                println!("{:?} = {:?}", e, evaluation),
-            _ => {}
-        }
+    let initial_expressions = get_initial_expression_list(3);
+
+    let mut expressions: Vec<Expression<f64>> = Vec::new();
+
+    {
+        // Must be scoped so the mutable reference to `expressions` dies before we want to use the list again
+        let callback = &mut |e| {
+            expressions.push(e)
+        };
+
+        make_possible_expressions(initial_expressions, callback);
+    }
+
+    for e in expressions {
+        println!("{:?}", e)
     }
 }
 
-fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
+fn make_possible_expressions<T: Clone>(mut es: Vec<Expression<T>>, callback: &mut FnMut(Expression<T>)) {
     if es.len() < 2 {
-        return es
+        callback(es.swap_remove(0));
+        return
     }
-
-    let mut ess: Vec<Expression<T>> = Vec::new();
 
     for i in 0..es.len() - 1 {
         let a = &es[i];
@@ -34,11 +40,9 @@ fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
             new_es.push(c);
             new_es.extend(es[i + 2..es.len()].to_vec());
 
-            ess.extend(create_tree(new_es))
+            make_possible_expressions(new_es, callback)
         }
     }
-
-    return ess
 }
 
 fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
