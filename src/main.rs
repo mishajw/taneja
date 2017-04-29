@@ -1,6 +1,6 @@
 extern crate num;
 
-use num::{CheckedAdd, CheckedMul};
+use num::{CheckedAdd, CheckedSub, CheckedMul, CheckedDiv};
 use std::boxed::Box;
 use std::fmt;
 use std::fmt::Debug;
@@ -9,10 +9,12 @@ use std::fmt::Debug;
 enum Expression<T> {
     Value(T),
     Add(Box<Expression<T>>, Box<Expression<T>>),
+    Subtract(Box<Expression<T>>, Box<Expression<T>>),
     Multiply(Box<Expression<T>>, Box<Expression<T>>),
+    Divide(Box<Expression<T>>, Box<Expression<T>>),
 }
 
-impl<T: CheckedAdd + CheckedMul + Clone> Expression<T> {
+impl<T: CheckedAdd + CheckedSub + CheckedMul + CheckedDiv + Clone> Expression<T> {
     fn evaluate(&self) -> Option<T> {
         match self {
             &Expression::Value(ref a) =>
@@ -22,9 +24,19 @@ impl<T: CheckedAdd + CheckedMul + Clone> Expression<T> {
                     (Some(a), Some(b)) => a.checked_add(&b),
                     _ => None,
                 },
+            &Expression::Subtract(ref a, ref b) =>
+                match (a.evaluate(), b.evaluate()) {
+                    (Some(a), Some(b)) => a.checked_sub(&b),
+                    _ => None,
+                },
             &Expression::Multiply(ref a, ref b) =>
                 match (a.evaluate(), b.evaluate()) {
                     (Some(a), Some(b)) => a.checked_mul(&b),
+                    _ => None,
+                },
+            &Expression::Divide(ref a, ref b) =>
+                match (a.evaluate(), b.evaluate()) {
+                    (Some(a), Some(b)) => a.checked_div(&b),
                     _ => None,
                 },
         }
@@ -36,7 +48,9 @@ impl<T: Debug> Debug for Expression<T> {
         match self {
             &Expression::Value(ref a) => write!(f, "{:?}", a),
             &Expression::Add(ref a, ref b) => write!(f, "({:?} + {:?})", a, b),
+            &Expression::Subtract(ref a, ref b) => write!(f, "({:?} - {:?})", a, b),
             &Expression::Multiply(ref a, ref b) => write!(f, "({:?} * {:?})", a, b),
+            &Expression::Divide(ref a, ref b) => write!(f, "({:?} / {:?})", a, b),
         }
     }
 }
@@ -51,7 +65,9 @@ fn get_initial_expression_list(length: i32) -> Vec<Expression<i32>> {
 fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
     vec![
         Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone()))]
+        Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Divide(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
 fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
