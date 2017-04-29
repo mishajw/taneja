@@ -35,22 +35,42 @@ fn get_initial_expression_list(length: i32) -> Vec<Expression<f64>> {
         .collect::<Vec<Expression<f64>>>()
 }
 
-fn get_possible_combinations(a: Expression<f64>, b: Expression<f64>) -> Vec<Expression<f64>> {
+fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
     vec![
         Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
         Expression::Multiply(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
-fn main() {
-    let a = Expression::Value(1);
-    let b = Expression::Value(2);
-    let c = Expression::Value(3);
-    let add = Expression::Add(Box::new(a), Box::new(b));
-    let multiply = Expression::Multiply(Box::new(add), Box::new(c));
-    let final_expression = multiply;
+fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Vec<Expression<T>>> {
+    if es.len() < 2 {
+        return vec![es]
+    }
 
-    println!("final_expression: {:?}", final_expression);
-    println!("final_expression.evaluate(): {:?}", final_expression.evaluate());
-    println!("get_initial_expression_list: {:?}", get_initial_expression_list(3));
+    let mut ess: Vec<Vec<Expression<T>>> = Vec::new();
+
+    for i in 0..es.len() - 1 {
+        let a = &es[i];
+        let b = &es[i + 1];
+        
+        let combinations = get_possible_combinations(a, b);
+
+        for c in combinations {
+            let mut new_es = es[0..i].to_vec();
+            new_es.push(c);
+            new_es.extend(es[i + 2..es.len()].to_vec());
+
+            ess.extend(create_tree(new_es))
+        }
+    }
+
+    return ess
+}
+
+fn main() {
+    let es = get_initial_expression_list(3);
+    
+    for e in create_tree(es) {
+        println!("{:?}", e);
+    }
 }
 
