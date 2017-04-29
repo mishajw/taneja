@@ -63,22 +63,6 @@ impl<T: Debug> Debug for Expression<T> {
     }
 }
 
-
-fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
-    (1..length + 1)
-        .map(|x| x as f64)
-        .map(Expression::Value)
-        .collect::<Vec<Expression<f64>>>()
-}
-
-fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
-    vec![
-        Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Divide(Box::new(a.clone()), Box::new(b.clone()))]
-}
-
 fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
     if es.len() < 2 {
         return es
@@ -102,5 +86,20 @@ fn create_tree<T: Clone>(es: Vec<Expression<T>>) -> Vec<Expression<T>> {
     }
 
     return ess
+}
+
+fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
+    (1..length + 1)
+        .map(|x| x as f64)
+        .map(Expression::Value)
+        .collect::<Vec<Expression<f64>>>()
+}
+
+fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
+    vec![
+        Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
+        Expression::Divide(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
