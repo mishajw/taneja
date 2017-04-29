@@ -1,9 +1,9 @@
-extern crate num;
+mod number;
 
-use num::{CheckedAdd, CheckedSub, CheckedMul, CheckedDiv};
+use number::Number;
 use std::boxed::Box;
-use std::fmt;
 use std::fmt::Debug;
+use std::fmt;
 
 #[derive(Clone)]
 enum Expression<T> {
@@ -14,29 +14,29 @@ enum Expression<T> {
     Divide(Box<Expression<T>>, Box<Expression<T>>),
 }
 
-impl<T: CheckedAdd + CheckedSub + CheckedMul + CheckedDiv + Clone> Expression<T> {
+impl<T: Number + Clone> Expression<T> {
     fn evaluate(&self) -> Option<T> {
         match self {
             &Expression::Value(ref a) =>
                 Some(a.clone()),
             &Expression::Add(ref a, ref b) =>
                 match (a.evaluate(), b.evaluate()) {
-                    (Some(a), Some(b)) => a.checked_add(&b),
+                    (Some(a), Some(b)) => a.add(&b),
                     _ => None,
                 },
             &Expression::Subtract(ref a, ref b) =>
                 match (a.evaluate(), b.evaluate()) {
-                    (Some(a), Some(b)) => a.checked_sub(&b),
+                    (Some(a), Some(b)) => a.subtract(&b),
                     _ => None,
                 },
             &Expression::Multiply(ref a, ref b) =>
                 match (a.evaluate(), b.evaluate()) {
-                    (Some(a), Some(b)) => a.checked_mul(&b),
+                    (Some(a), Some(b)) => a.multiply(&b),
                     _ => None,
                 },
             &Expression::Divide(ref a, ref b) =>
                 match (a.evaluate(), b.evaluate()) {
-                    (Some(a), Some(b)) => a.checked_div(&b),
+                    (Some(a), Some(b)) => a.divide(&b),
                     _ => None,
                 },
         }
@@ -56,10 +56,11 @@ impl<T: Debug> Debug for Expression<T> {
 }
 
 
-fn get_initial_expression_list(length: i32) -> Vec<Expression<i32>> {
+fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
     (1..length + 1)
+        .map(|x| x as f64)
         .map(Expression::Value)
-        .collect::<Vec<Expression<i32>>>()
+        .collect::<Vec<Expression<f64>>>()
 }
 
 fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
