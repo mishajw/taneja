@@ -1,10 +1,12 @@
 mod expression;
 mod number;
+mod possible_expressions;
 
 use expression::Expression;
 use number::Number;
-use std::env;
+use possible_expressions::make_possible_expressions;
 use std::collections::BTreeMap;
+use std::env;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -44,42 +46,10 @@ fn run_with_length(length: usize) {
     }
 }
 
-fn make_possible_expressions<T: Clone>(mut es: Vec<Expression<T>>, callback: &mut FnMut(Expression<T>)) {
-    if es.len() < 2 {
-        callback(es.swap_remove(0));
-        return
-    }
-
-    for i in 0..es.len() - 1 {
-        let a = &es[i];
-        let b = &es[i + 1];
-        
-        let combinations = get_possible_combinations(a, b);
-
-        for c in combinations {
-            let mut new_es = es[0..i].to_vec();
-            new_es.push(c);
-            new_es.extend(es[i + 2..es.len()].to_vec());
-
-            make_possible_expressions(new_es, callback)
-        }
-    }
-}
-
 fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
     (1..length + 1)
         .map(|x| x as f64)
         .map(Expression::Value)
         .collect::<Vec<Expression<f64>>>()
-}
-
-fn get_possible_combinations<T: Clone>(a: &Expression<T>, b: &Expression<T>) -> Vec<Expression<T>> {
-    vec![
-        Expression::Add(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Subtract(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Multiply(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Divide(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Power(Box::new(a.clone()), Box::new(b.clone())),
-        Expression::Concat(Box::new(a.clone()), Box::new(b.clone()))]
 }
 
