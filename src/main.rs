@@ -7,6 +7,10 @@ use number::Number;
 use possible_expressions::make_possible_expressions;
 use std::collections::BTreeMap;
 use std::env;
+use std::fs;
+use std::io::BufWriter;
+use std::io::Error;
+use std::io::Write;
 
 fn main() {
     let args: Vec<_> = env::args().collect();
@@ -49,7 +53,11 @@ fn run_with_length(length: usize) {
         println!("Done.");
     }
 
-    print_streak_information(evaluations)
+    if let Err(err) = write_evaluations(&evaluations) {
+        println!("Error when creating evaluations file: {}", err);
+    }
+
+    print_streak_information(&evaluations)
 }
 
 fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
@@ -59,7 +67,19 @@ fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
         .collect::<Vec<Expression<f64>>>()
 }
 
-fn print_streak_information(evaluations: BTreeMap<i32, Expression<f64>>) {
+fn write_evaluations(evaluations: &BTreeMap<i32, Expression<f64>>) -> Result<(), Error> {
+    fs::create_dir_all("output")?;
+    let file = fs::File::create("output/evaluations.txt")?;
+    let mut writer = BufWriter::new(file);
+
+    for (evaluation, expression) in evaluations {
+        writeln!(&mut writer, "{} = {}", expression, evaluation)?;
+    }
+
+    Ok(())
+}
+
+fn print_streak_information(evaluations: &BTreeMap<i32, Expression<f64>>) {
     let mut longest_streak = 0i32;
     let mut longest_streak_start: Option<&i32> = None;
     let mut longest_streak_end: Option<&i32> = None;
