@@ -26,6 +26,7 @@ fn run_with_length(length: usize) {
     let initial_expressions = get_initial_expression_list(length);
 
     let mut evaluations: BTreeMap<i32, Expression<f64>> = BTreeMap::new();
+    let mut found = 0i64;
 
     {
         // Must be scoped so the mutable reference to `expressions` dies before we want to use the list again
@@ -34,6 +35,12 @@ fn run_with_length(length: usize) {
                 if evaluation.is_integer() {
                     evaluations.insert(evaluation as i32, e.clone());
                 }
+
+                if found % 100000 == 0 {
+                    println!("Found {} expressions", found)
+                }
+
+                found += 1
             }
         };
 
