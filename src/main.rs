@@ -50,8 +50,9 @@ fn run_with_length(length: usize) {
 
         println!("Starting to make expressions...");
         make_possible_expressions(initial_expressions, callback);
-        println!("Done.");
     }
+
+    println!("Done. Found {} expressions", &found);
 
     if let Err(err) = write_evaluations(&evaluations) {
         println!("Error when creating evaluations file: {}", err);
