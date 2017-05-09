@@ -1,3 +1,5 @@
+extern crate clap;
+
 mod expression;
 mod number;
 mod possible_expressions;
@@ -6,23 +8,25 @@ use expression::Expression;
 use number::Number;
 use possible_expressions::make_possible_expressions;
 use std::collections::BTreeMap;
-use std::env;
 use std::fs;
 use std::io::BufWriter;
 use std::io::Error;
 use std::io::Write;
 
 fn main() {
-    let args: Vec<_> = env::args().collect();
+    let matches = clap::App::new("taneja")
+        .arg(clap::Arg::with_name("numbers")
+            .long("numbers")
+            .short("n")
+            .help("The amount of numbers to use to make the series")
+            .takes_value(true))
+        .get_matches();
 
-    if args.len() != 2 {
-        println!("Usage: {} <amount of numbers>", args[0]);
-        return
-    }
+    let numbers_opt = matches.value_of("numbers")
+        .and_then(|numbers_str| numbers_str.parse::<usize>().ok());
 
-    match args[1].parse::<usize>() {
-        Ok(length) => run_with_length(length),
-        Err(err) => println!("Couldn't parse {} as integer: {}", args[1], err),
+    if let Some(numbers) = numbers_opt {
+        run_with_length(numbers)
     }
 }
 
