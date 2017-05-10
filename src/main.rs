@@ -38,14 +38,14 @@ fn main() {
     let write_all = matches.is_present("write_all");
 
     let look_for_opt = matches.value_of("look_for")
-        .and_then(|numbers_str| numbers_str.parse::<i64>().ok());
+        .and_then(|numbers_str| numbers_str.parse::<f64>().ok());
 
     if write_all && look_for_opt.is_some() {
         println!("Can't select both write_all and look_for")
     } else if write_all {
         run_and_write_all(numbers)
     } else if let Some(look_for) = look_for_opt {
-        println!("Not implemented")
+        run_and_look_for(numbers, look_for)
     } else {
         println!("Must select either write_all or look_for")
     }
@@ -84,6 +84,18 @@ fn run_and_write_all(length: usize) {
     }
 
     print_streak_information(&evaluations)
+}
+
+fn run_and_look_for(length: usize, look_for: f64) {
+    let initial_expressions = get_initial_expression_list(length);
+
+    let callback = &mut |e: Expression<f64>| {
+        if e.evaluate() == Some(look_for) {
+            println!("Found result for {} with expression {}", look_for, e)
+        }
+    };
+
+    make_possible_expressions(initial_expressions, callback)
 }
 
 fn get_initial_expression_list(length: usize) -> Vec<Expression<f64>> {
