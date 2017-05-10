@@ -20,17 +20,38 @@ fn main() {
             .short("n")
             .help("The amount of numbers to use to make the series")
             .takes_value(true))
+        .arg(clap::Arg::with_name("write_all")
+            .long("write_all")
+            .short("w")
+            .help("Write all found evaluations to a file"))
+        .arg(clap::Arg::with_name("look_for")
+            .long("look_for")
+            .short("l")
+            .help("Look for specific number")
+            .takes_value(true))
         .get_matches();
 
-    let numbers_opt = matches.value_of("numbers")
-        .and_then(|numbers_str| numbers_str.parse::<usize>().ok());
+    let numbers = matches.value_of("numbers")
+        .and_then(|numbers_str| numbers_str.parse::<usize>().ok())
+        .unwrap_or(3);
 
-    if let Some(numbers) = numbers_opt {
-        run_with_length(numbers)
+    let write_all = matches.is_present("write_all");
+
+    let look_for_opt = matches.value_of("look_for")
+        .and_then(|numbers_str| numbers_str.parse::<i64>().ok());
+
+    if write_all && look_for_opt.is_some() {
+        println!("Can't select both write_all and look_for")
+    } else if write_all {
+        run_and_write_all(numbers)
+    } else if let Some(look_for) = look_for_opt {
+        println!("Not implemented")
+    } else {
+        println!("Must select either write_all or look_for")
     }
 }
 
-fn run_with_length(length: usize) {
+fn run_and_write_all(length: usize) {
     let initial_expressions = get_initial_expression_list(length);
 
     let mut evaluations: BTreeMap<i32, Expression<f64>> = BTreeMap::new();
